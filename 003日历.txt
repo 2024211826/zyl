@@ -1,0 +1,115 @@
+#include <iostream>
+using namespace std;
+void input(int& y, int& m)
+{
+	cout << "年份：";
+	cin >> y;
+	cout << "月份：";
+	cin >> m;
+	while (y < 1900 || y > 2100 || m < 1 || m > 12)
+	{
+		cerr << "input error" << endl;
+		cout << "reinput:";
+		cin >> y >> m;
+	}
+}
+void leapyear(int y, int m, int day[]) 
+{
+	bool leap = (y % 400 == 0) || (y % 100 != 0 && y % 4 == 0);
+	if (leap && m == 2) day[1] += 1;
+}
+int zeller(int year, int month) 
+{
+	if (month < 3) {
+		month += 12;
+		year -= 1;
+	}
+	int c = year / 100;
+	int y = year % 100;
+	int w = (c / 4 - 2 * c + y + y / 4 + 13 * (month + 1) / 5 + 35) % 7;
+	//35是一个足够大的7的倍数，确保w>0
+	return w;
+}
+void calendar(int y, int m, int w, int day[])
+{
+	cout << "\t\t\t" << y << "年" << m << "月" << endl;
+	cout << "sun\tmon\ttue\twed\tthu\tfri\tsar" << endl;
+	for (int i = 0; i < w; i++) cout << "\t";
+	for (int i = 0; i < day[m - 1]; i++)
+	{
+		cout << i + 1 << "\t";
+		if ((w + i + 1) % 7 == 0) cout << endl;
+	}
+}
+int main()
+{
+	int y, m, w;
+	int day[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	input(y, m);
+	leapyear(y, m, day);
+	w = zeller(y, m);
+	calendar(y, m, w, day);
+	return 0;
+}
+————————
+年份：2024
+月份：11
+                        2024年11月
+sun     mon     tue     wed     thu     fri     sar
+                                        1       2
+3       4       5       6       7       8       9
+10      11      12      13      14      15      16
+17      18      19      20      21      22      23
+24      25      26      27      28      29      30
+————————
+年份：1999
+月份：12
+                        1999年12月
+sun     mon     tue     wed     thu     fri     sar
+                        1       2       3       4
+5       6       7       8       9       10      11
+12      13      14      15      16      17      18
+19      20      21      22      23      24      25
+26      27      28      29      30      31
+————————
+年份：2000
+月份：1
+                        2000年1月
+sun     mon     tue     wed     thu     fri     sar
+                                                1
+2       3       4       5       6       7       8
+9       10      11      12      13      14      15
+16      17      18      19      20      21      22
+23      24      25      26      27      28      29
+30      31
+————————
+年份：2000
+月份：2
+                        2000年2月
+sun     mon     tue     wed     thu     fri     sar
+                1       2       3       4       5
+6       7       8       9       10      11      12
+13      14      15      16      17      18      19
+20      21      22      23      24      25      26
+27      28      29
+————————
+年份：2004
+月份：2
+                        2004年2月
+sun     mon     tue     wed     thu     fri     sar
+1       2       3       4       5       6       7
+8       9       10      11      12      13      14
+15      16      17      18      19      20      21
+22      23      24      25      26      27      28
+29
+————————
+年份：2006
+月份：4
+                        2006年4月
+sun     mon     tue     wed     thu     fri     sar
+                                                1
+2       3       4       5       6       7       8
+9       10      11      12      13      14      15
+16      17      18      19      20      21      22
+23      24      25      26      27      28      29
+30
