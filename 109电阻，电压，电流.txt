@@ -1,0 +1,123 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+using std::cin;
+using std::cout;
+using std::endl;
+using std::vector;
+using std::fixed;
+using std::setprecision;
+int input1(int& n)
+{
+	int num;
+	cout << "电阻数量（单位：个）：";
+	cin >> num;
+	while ( num % 2 != 0 || num <= 0)
+	{
+		cout << "reinput:";
+		cin >> num;
+	}
+	n = num / 2;
+	return n;
+}
+void input2(int n, vector<double>& r, vector<double>& Un)
+{
+	cout << "电源电动势（单位：V）：";
+	cin >> Un[0];
+	while (Un[0] <= 0)
+	{
+		cout << "reinput:";
+		cin >> Un[0];
+	}
+	for (int i = 0; i < 2 * n; i++)
+	{
+		cout << "电阻" << i + 1 << "阻值（单位：Ω）：";
+		cin >> r[i];
+		while(r[i] <= 0)
+		{
+			cout << "reinput:";
+			cin >> r[i];
+		}
+	}
+}
+void calculate(int n, vector<double>& r, vector<double>& pr, vector<double>& Un, vector<double>& U, vector<double>& I)
+{
+	pr[n - 1] = r[2 * n - 1];
+	for (int i = n - 1; i > 0; i--)
+	{
+		pr[i - 1] = (pr[i] + r[2 * i]) * r[2 * i - 1] / (pr[i] + r[2 * i] + r[2 * i - 1]);
+	}
+	for (int i = 0; i < n; i++)
+	{
+		Un[i + 1] = Un[i] * pr[i] / (pr[i] + r[2 * i]);
+	}
+	for (int i = 0; i < n; i++)
+	{
+		U[2 * i + 1] = Un[i + 1];
+	}
+	for (int i = 0; i < n; i++)
+	{
+		U[2 * i] = Un[i] - Un[i + 1];
+	}
+	for (int i = 0; i < 2 * n; i++)
+	{
+		I[i] = U[i] / r[i];
+	}
+}
+void display(int n, vector<double>& U, vector<double>& I)
+{
+	cout << " \t电压（单位：V)\t电流（单位：A）" << endl;
+	for (int i = 0; i < 2 * n; i++)
+	{
+		cout << "电阻" << fixed << setprecision(5) << i + 1 << "\t" << U[i] << "\t\t" << I[i] << endl;
+	}
+}
+int main()
+{
+	int n = input1(n);
+	vector<double> r (2 * n); //电阻阻值
+	vector<double> pr(n);     //parallel resistance缩写
+	vector<double> Un(n + 1); //n是node结点的缩写，Un[0]是电源电动势，其他都是结点处电压
+	vector<double> U (2 * n); //电阻电压
+	vector<double> I (2 * n); //电阻电流
+	input2   (n, r,     Un      );
+	calculate(n, r, pr, Un, U, I);
+	display  (n,            U, I);
+	return 0;
+}
+————————————————
+电阻数量（单位：个）：8
+电源电动势（单位：V）：1.5
+电阻1阻值（单位：Ω）：1
+电阻2阻值（单位：Ω）：3
+电阻3阻值（单位：Ω）：1
+电阻4阻值（单位：Ω）：5
+电阻5阻值（单位：Ω）：3
+电阻6阻值（单位：Ω）：1
+电阻7阻值（单位：Ω）：1
+电阻8阻值（单位：Ω）：1
+        电压（单位：V)  电流（单位：A）
+电阻1   0.59328         0.59328
+电阻2   0.90672         0.30224
+电阻3   0.29104         0.29104
+电阻4   0.61567         0.12313
+电阻5   0.50373         0.16791
+电阻6   0.11194         0.11194
+电阻7   0.05597         0.05597
+电阻8   0.05597         0.05597
+————————————————
+电阻数量（单位：个）：6
+电源电动势（单位：V）：12
+电阻1阻值（单位：Ω）：1000
+电阻2阻值（单位：Ω）：1000
+电阻3阻值（单位：Ω）：1000
+电阻4阻值（单位：Ω）：1000
+电阻5阻值（单位：Ω）：1000
+电阻6阻值（单位：Ω）：1000
+        电压（单位：V)  电流（单位：A）
+电阻1   7.38462         0.00738
+电阻2   4.61538         0.00462
+电阻3   2.76923         0.00277
+电阻4   1.84615         0.00185
+电阻5   0.92308         0.00092
+电阻6   0.92308         0.00092

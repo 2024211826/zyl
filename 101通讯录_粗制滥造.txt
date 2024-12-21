@@ -1,0 +1,157 @@
+#include <iostream>
+using namespace std;
+
+struct person {
+	string id;
+	long phone;
+	person* next;
+};
+
+int main() {
+	person* head = 0;
+	while (true) {
+		cout << "\t通讯录" << endl <<
+			"0  关闭通讯录" << endl <<
+			"1  新建联系人" << endl <<
+			"2  删除联系人" << endl <<
+			"3  查看联系人信息" << endl <<
+			"4  编辑联系人信息" << endl <<
+			"5  查看所有联系人" << endl <<
+			"请输入功能所对应的数字: ";
+		int menu;
+		cin >> menu;
+		while (menu < 1 || menu > 5) {
+			cerr << "reinput: ";
+			cin >> menu;
+		}
+		system("clear");
+		switch (menu) {
+			case 0: return 0;
+			case 1: 
+				add(head);
+				break;
+			case 2: 
+				if (head->next == 0) {
+					cout << "通讯录为空";
+					break;
+				}
+				sub(head);
+				break;
+			case 3: 				
+				if (head->next == 0) {
+					cout << "通讯录为空";
+					break;
+				}
+				edit(head);
+				break;
+			case 4: 
+				if (head->next == 0) {
+					cout << "通讯录为空";
+					break;
+				}
+				view(head);
+				break;
+			default:
+				cerr << menu;
+				break;
+		}
+	}
+}
+
+void add(person* head) {
+	int addnum;
+	cout << "新建联系人数量（单位：个）：";
+	cin >> addnum;
+	while (addnum <= 0){
+		cout << "reinput:";
+		cin >> addnum;
+	}
+	person* ptr = head;
+	while (ptr->next != 0){ 
+		ptr = ptr->next;
+	}
+	for(int i = 0; i < addnum; i++)
+	ptr->next = new person;
+	ptr = ptr->next;
+	cout << "姓名/名称/id：";
+	cin >> ptr->id;
+	cout << "电话：";
+	cin >> ptr->phone;
+	cout << "添加成功";
+	ptr->next = 0;
+}
+
+void sub(person* head) {
+	person* ptr = 0;
+	person* testptr = 0;
+	int subnum;
+	string deleteid;
+	cout << "删除联系人数量（单位：个）：";
+	compare(subnum, head);
+	for (int i = 0; i < subnum; i++){
+		cout << "您要删除的第" << i + 1 << "个联系人为：";
+		search(deleteid, head, ptr, testptr);
+		ptr->next = testptr->next;
+		delete testptr;
+	 	testptr = 0;
+		cout << "删除成功";
+	}
+}
+
+void edit(person* head) {
+	person* ptr = 0;
+	person* testptr = 0;
+	string editid;
+	int editnum;
+	cout << "您要修改几位联系人的信息（单位：个）：";
+	compare(editnum, head);
+	for (int i = 0; i < editnum; i++){
+		cout << "第" << i + 1 << "姓名 / 名称 / id：";
+		search(editid, head, ptr, testptr);
+		cout << "姓名/名称/id：";
+		cin >> testptr->id;
+		cout << "电话：";
+		cin >> testptr->phone;
+	}
+}
+
+void view(person* head) {
+	int personnum = 0;
+	for (person* ptr = head; ptr->next != 0; ptr = ptr->next) {
+		personnum += 1;
+		cout << personnum << " " << ptr->id << endl << "  " << ptr->phone;
+	}
+}
+
+void search(string targetid, person* head, person* ptr, person* testptr) {
+	cin >> targetid;
+	ptr = head;
+	person* testptr = ptr->next;
+	while (targetid != testptr->id) {
+		if (testptr->next == 0) {
+			cout << "查无此人";
+			break;
+		}
+		ptr = ptr->next;
+		testptr = ptr->next;
+	}
+}
+
+void compare(int& num, person* head) {
+	int personnum = 0;
+	person* ptr = head;
+	while (ptr->next != 0) {
+		personnum += 1;
+		ptr = ptr->next;
+	}
+	cin >> num;
+	while (num <= 0 || num > personnum) {
+		cout << "reinput:";
+		cin >> num;
+	}
+}
+——————————
+教训：break语句
+for循环，while循环
+操作结束后提示成功
+delete后将指针设置为0
